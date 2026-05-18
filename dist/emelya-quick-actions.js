@@ -1,8 +1,6 @@
 import { LitElement, html, css } from "https://unpkg.com/lit@2.0.0/index.js?module";
 
-// ─────────────────────────────────────────────
 //  RUNTIME CARD
-// ─────────────────────────────────────────────
 class EmelyaQuickActions extends LitElement {
 
   static properties = {
@@ -34,13 +32,13 @@ class EmelyaQuickActions extends LitElement {
     return document.createElement("emelya-quick-actions-editor");
   }
 
-  static getStubConfig() {
+  static getStubConfig() {//создание конфигурации по умолчанию, когда пользователь только добавляет карточку на панель
     return {
       actions: [
         { label: "Home", icon: "", entity: "", service: { domain: "input_select" } },
         { label: "Away", icon: "", entity: "", service: { domain: "input_select" } },
         { divider: true },
-        { label: "Light", icon: "", entity: "light.example", service: { domain: "light" } },
+        { label: "Light", icon: "", entity: "", service: { domain: "light" } },
       ]
     };
   }
@@ -186,7 +184,7 @@ class EmelyaQuickActions extends LitElement {
       line-height: 16px;
       text-align: center;
       color: #FFFFFF;
-      white-space: pre-line;
+      white-space: pre-wrap;
       margin: 0;
     }
     .label.single-line { bottom: 40px; }
@@ -376,7 +374,7 @@ class EmelyaQuickActions extends LitElement {
     this.dragStarted = false;
   }
 
-  // ── Click / hold / double-tap wiring ──
+  // Click / hold / double-tap wiring
 
   _handleClick(action, index, e) {
     if (this.dragStarted) {
@@ -471,8 +469,6 @@ class EmelyaQuickActions extends LitElement {
       this.dispatchEvent(event);
       return;
     }
-
-    // "none" — do nothing
   }
 
   _doToggle(action, index) {
@@ -612,13 +608,9 @@ class EmelyaQuickActions extends LitElement {
     `;
   }
 }
-
 customElements.define("emelya-quick-actions", EmelyaQuickActions);
 
-
-// ─────────────────────────────────────────────
-//  VISUAL EDITOR
-// ─────────────────────────────────────────────
+// VISUAL EDITOR
 const ICON_OPTIONS = [
   { label: "Спальня",        value: "/local/images/icons/bedroom.svg" },
   { label: "Гостиная",       value: "/local/images/icons/living_room.svg" },
@@ -787,10 +779,6 @@ class EmelyaQuickActionsEditor extends LitElement {
     this._editingIndex = null;
     this._actionStates = {}; // { "tap_action": "navigate", "hold_action": "none", ... }
   }
-
-
-
-
   setConfig(config) {
     this.config = {
       actions: [],
@@ -892,7 +880,6 @@ class EmelyaQuickActionsEditor extends LitElement {
     `;
   }
 
-  // ── Action options shared across all three interaction types ──
   get _actionOptions() {
     return [
       { value: "more-info",    label: "Действие по умолчанию (more-info)" },
@@ -983,7 +970,7 @@ class EmelyaQuickActionsEditor extends LitElement {
     const schema = [
       {
         name: "label",
-        selector: { text: {} }
+        selector: { text: {multiline: true} }
       },
       {
         name: "entity",
@@ -1019,7 +1006,7 @@ class EmelyaQuickActionsEditor extends LitElement {
             style="flex:1; border:1px solid var(--divider-color); border-radius:10px; padding:10px 12px; background:var(--secondary-background-color); color:var(--primary-text-color); font:inherit; box-sizing:border-box; width:100%;"
             @change=${(e) => this._updateField(index, 'icon', e.target.value)}
           >
-            <option value="">— Выберите иконку —</option>
+            <option value="">Выберите иконку</option>
             ${ICON_OPTIONS.map(opt => html`
               <option value=${opt.value} ?selected=${action.icon === opt.value}>
                 ${opt.label}
@@ -1028,7 +1015,7 @@ class EmelyaQuickActionsEditor extends LitElement {
           </select>
         </div>
 
-        <div class="section-label" style="margin-top:16px">── Взаимодействие ──</div>
+        <div class="section-label" style="margin-top:16px">Взаимодействие</div>
 
         ${this._renderActionSelect(index, 'tap_action', '👆 Tap')}
         ${this._renderActionSelect(index, 'hold_action', '✋ Hold')}
@@ -1037,7 +1024,7 @@ class EmelyaQuickActionsEditor extends LitElement {
     `;
   }
 
-  // ── Helpers ──
+  // Helpers
 
   _edit(i) {
     this._actionStates = {};
