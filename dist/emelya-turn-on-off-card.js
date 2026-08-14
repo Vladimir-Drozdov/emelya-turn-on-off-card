@@ -36,7 +36,6 @@ function isEntityOn(hass, entityId) {
   return ON_STATES.includes(stateObj.state);
 }
 
-/* MAIN CARD */
 class EmelyaTurnOnOffCard extends LitElement {
   static properties = {
     hass: {},
@@ -116,7 +115,7 @@ class EmelyaTurnOnOffCard extends LitElement {
       -webkit-mask-composite: xor !important;
       mask-composite: exclude !important;
     }
-    .icon-button img { width: 14px; height: 20px; }
+    .icon-button img { width: 20px; height: 20px; }
 
     .text-wrap {
       min-width: 0;
@@ -139,7 +138,6 @@ class EmelyaTurnOnOffCard extends LitElement {
       line-height: 1.2;
     }
 
-    /* Нижний переключатель: два слота, слева пустой кружок (выкл), справа power (вкл) */
     .switch-wrap {
       position: relative;
       display: flex;
@@ -180,15 +178,16 @@ class EmelyaTurnOnOffCard extends LitElement {
       transition: background 0.2s ease;
     }
     .switch-slot.active {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgb(50, 49, 53);
     }
     .switch-slot img { width: 18px; height: 18px; }
 
     .switch-dot {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
-      background: #ffffff;
+      border: 2px solid #ffffff;
+      box-sizing: border-box;
     }
 
     .empty {
@@ -265,6 +264,12 @@ class EmelyaTurnOnOffCard extends LitElement {
     this._setState(turningOn);
   }
 
+  _onIconButtonClick(e) {
+    e.stopPropagation();
+    if (!this.config?.entity) return;
+    this._setState(!this._isOn());
+  }
+
   firstUpdated() {
     const frame = this.shadowRoot?.querySelector("ha-card");
     if (!frame) return;
@@ -281,6 +286,7 @@ class EmelyaTurnOnOffCard extends LitElement {
 
   _onPointerDown(e) {
     if (e.target.closest(".switch-wrap")) return;
+    if (e.target.closest(".icon-button")) return;
     if (hasAction(this.config, "hold_action")) {
       this._holdTimer = setTimeout(() => this._performAction("hold"), 500);
     }
@@ -292,6 +298,7 @@ class EmelyaTurnOnOffCard extends LitElement {
 
   _onClick(e) {
     if (e.target.closest(".switch-wrap")) return;
+    if (e.target.closest(".icon-button")) return;
     const now = Date.now();
     if (this._lastTap && now - this._lastTap < 300) {
       if (hasAction(this.config, "double_tap_action")) {
@@ -329,7 +336,8 @@ class EmelyaTurnOnOffCard extends LitElement {
     return html`
       <ha-card>
         <div class="header">
-          <div class="icon-button ${isOn ? "on" : ""}">
+          <div class="icon-button ${isOn ? "on" : ""}"
+               @click=${(e) => this._onIconButtonClick(e)}>
             <img src="${this.base}/images/power.png" />
           </div>
           <div class="text-wrap">
@@ -374,7 +382,6 @@ if (!customElements.get("emelya-turn-on-off-card")) {
   customElements.define("emelya-turn-on-off-card", EmelyaTurnOnOffCard);
 }
 
-/* EDITOR */
 class EmelyaTurnOnOffCardEditor extends LitElement {
   static properties = {
     hass: {},
@@ -490,7 +497,6 @@ if (!customElements.get("emelya-turn-on-off-card-editor")) {
   customElements.define("emelya-turn-on-off-card-editor", EmelyaTurnOnOffCardEditor);
 }
 
-/* REGISTER */
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "custom:emelya-turn-on-off-card",
