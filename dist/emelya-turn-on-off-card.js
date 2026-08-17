@@ -147,7 +147,7 @@ class EmelyaTurnOnOffCard extends LitElement {
       gap: 8px;
       box-sizing: border-box;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.10);
+      background: #1C1B1F;
       z-index: 1;
     }
     .switch-wrap::before {
